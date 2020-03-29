@@ -47,6 +47,26 @@ namespace ShopTopGunLab.Controllers
             productList.Add(product1);
             HttpContext.Session.SetList("ProductData", productList);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+
+        public void UpdateComplexData(Product product)
+        {
+            
+            RemoveComplexData(product.ProductId);
+            List<Product> productList = HttpContext.Session.GetList<List<Product>>("ProductData");
+            Product product1 = new Product();
+           
+            product1.ProductId = product.ProductId;
+            product1.Name = product.Name;
+            product1.Quantity = product.Quantity;
+            product1.dimension = product.dimension;
+            
+            productList.Add(product1);
+            HttpContext.Session.SetList("ProductData", productList);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
 
@@ -56,12 +76,6 @@ namespace ShopTopGunLab.Controllers
 
            productList.Remove(productList.Where(x => x.ProductId == id).FirstOrDefault());
 
-            //Product product1 = new Product();
-            //product1.Name = product.Name;
-            //product1.Quantity = product.Quantity;
-            //product1.dimension = product.dimension;
-            //product1.ProductId = product.ProductId;
-            //productList.Remove(product1);
             HttpContext.Session.SetList("ProductData", productList);
 
            
@@ -129,82 +143,86 @@ namespace ShopTopGunLab.Controllers
             return View(product);
         }
 
-        //// GET: Products/Edit/5
-        //public async Task<IActionResult> Edit(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var product = await _context.products.FindAsync(id);
-        //    if (product == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return View(product);
-        //}
-
-        //// POST: Products/Edit/5
-        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        //// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(int id, [Bind("ProductId,Name,Quantity")] Product product)
-        //{
-        //    if (id != product.ProductId)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            _context.Update(product);
-        //            await _context.SaveChangesAsync();
-        //        }
-        //        catch (DbUpdateConcurrencyException)
-        //        {
-        //            if (!ProductExists(product.ProductId))
-        //            {
-        //                return NotFound();
-        //            }
-        //            else
-        //            {
-        //                throw;
-        //            }
-        //        }
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    return View(product);
-        //}
-
-        // GET: Products/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // GET: Products/Edit/5
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var product =  GetComplexData().FirstOrDefault(m => m.ProductId == id);
+            var product = GetComplexData().FirstOrDefault(m => m.ProductId == id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return View(product);
+        }
+
+        // POST: Products/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Name,Quantity")] Product product)
+        {
+            if (id != product.ProductId)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    UpdateComplexData(product);
+                   
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ProductExists(product.ProductId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(product);
+        }
+
+        // GET: Products/Delete/5
+        public async Task<IActionResult> Delete(int id,  bool delete)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var product = GetComplexData().FirstOrDefault(m => m.ProductId == id);
             if (product == null)
             {
                 return NotFound();
             }
 
-            return View(product);
+            if (delete == true)
+            {
+                RemoveComplexData(id);
+            }
+
+            return PartialView("Delete", product);
         }
 
-        // POST: Products/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+
+        
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var products = GetComplexData().ToList();
-            Product product = products.Where(product=>product.ProductId==id).First();
-            
+            //var products = GetComplexData().ToList();
+            //Product product = products.Where(product => product.ProductId == id).First();
+
             RemoveComplexData(id);
             return RedirectToAction(nameof(Index));
         }
