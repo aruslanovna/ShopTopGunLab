@@ -16,27 +16,30 @@ namespace ShopTopGunLab.Controllers
     public class ProductsController : Controller
     {
         private readonly IHttpContextAccessor _contextAccessor;
-
+        private readonly HttpContext _context;
         public ProductsController(IHttpContextAccessor contextAccessor)
         {
-            _contextAccessor = contextAccessor;
-            List<Product> productList = new List<Product>();
-            Product user = new Product();
-            user.Name = "Bread";
-            user.Quantity = 5;
-            productList.Add(user);
-            _contextAccessor.HttpContext.Session.SetList("ProductData", productList);
+          
+             _contextAccessor = contextAccessor;
+            SetComplexData();
         }
 
         [Route("Products/SetComplexData")]
         public void SetComplexData()        
         {
-            List<Product> productList = new List<Product>();
-            Product user = new Product();
-            user.Name = "Bread";
-            user.Quantity = 5;
-            productList.Add(user);
-            HttpContext.Session.SetList("ProductData", productList);
+            if (_contextAccessor.HttpContext.Session.Keys.Contains("ProductData") == true)
+            {
+                _contextAccessor.HttpContext.Session.GetList<List<Product>>("ProductData");
+            }
+            else
+            {
+                List<Product> productList = new List<Product>();
+                Product user = new Product();
+                user.Name = "Bread";
+                user.Quantity = 5;
+                productList.Add(user);
+                _contextAccessor.HttpContext.Session.SetList("ProductData", productList);
+            }
         }
 
         [HttpPost]
