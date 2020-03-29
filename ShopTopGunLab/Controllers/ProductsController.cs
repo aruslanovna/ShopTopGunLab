@@ -15,8 +15,6 @@ namespace ShopTopGunLab.Controllers
    
     public class ProductsController : Controller
     {
-
-
         private readonly IHttpContextAccessor _contextAccessor;
 
         public ProductsController(IHttpContextAccessor contextAccessor)
@@ -30,9 +28,6 @@ namespace ShopTopGunLab.Controllers
             _contextAccessor.HttpContext.Session.SetList("ProductData", productList);
         }
 
-        
-
-
         [Route("Products/SetComplexData")]
         public void SetComplexData()        
         {
@@ -43,7 +38,6 @@ namespace ShopTopGunLab.Controllers
             productList.Add(user);
             HttpContext.Session.SetList("ProductData", productList);
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -93,12 +87,10 @@ namespace ShopTopGunLab.Controllers
         [Route("Products/GetComplexData")]
         public IEnumerable<Product> GetComplexData()
         {
-            IEnumerable<Product> productList =  HttpContext.Session.GetList<List<Product>>("ProductData");
-                     
+            IEnumerable<Product> productList =  HttpContext.Session.GetList<List<Product>>("ProductData");                    
             return productList;
         }
-
-        
+  
         public async Task<IActionResult> Index(string sortOrder, string searchString)
         {
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
@@ -114,7 +106,6 @@ namespace ShopTopGunLab.Controllers
             }
             return View(GetComplexData());
         }
-
 
         public async Task<IActionResult> Details(int? id)
         {
@@ -137,7 +128,6 @@ namespace ShopTopGunLab.Controllers
         {
             return View();
         }
-
        
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -151,7 +141,6 @@ namespace ShopTopGunLab.Controllers
             }
             return View(product);
         }
-
       
         public async Task<IActionResult> Edit(int? id)
         {
@@ -167,7 +156,6 @@ namespace ShopTopGunLab.Controllers
             }
             return View(product);
         }
-
         
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -200,7 +188,6 @@ namespace ShopTopGunLab.Controllers
             }
             return View(product);
         }
-
         
         public async Task<IActionResult> Delete(int id,  bool delete)
         {
@@ -222,9 +209,7 @@ namespace ShopTopGunLab.Controllers
 
             return PartialView("Delete", product);
         }
-
-
-        
+ 
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
            
