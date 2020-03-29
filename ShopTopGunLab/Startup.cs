@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Persistance;
+
 using ShopTopGunLab.SessionConfig;
 
 namespace ShopTopGunLab
@@ -28,7 +28,8 @@ namespace ShopTopGunLab
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddPersistence(Configuration);
+            services.AddHttpContextAccessor();
+
             services.AddMvc().AddSessionStateTempDataProvider();
            // services.AddSession();
            // services.AddDistributedMemoryCache();
@@ -48,34 +49,41 @@ namespace ShopTopGunLab
             //    if (context.Session.Keys.Contains("product"))
             //    {
             //        Product product = context.Session.GetComplexData<Product>("ProductData");
-            //        await context.Response.WriteAsync($"Hello {product.Name}, your age: {product.Name}!");
+                   
             //    }
             //    else
             //    {
-            //        Product product = new Product { Name = "Cake", Quantity = "22" };
+            //        Product product = new Product { Name = "Cake", Quantity = 22, dimension=0, ProductId=0 };
             //        context.Session.SetComplexData("ProductData", product);
-            //        await context.Response.WriteAsync("Hello World!");
+                    
             //    }
             //});
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+               
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            // app.UseCookiePolicy();
 
             app.UseRouting();
+            // app.UseRequestLocalization();
+            // app.UseCors();
 
+            app.UseAuthentication();
             app.UseAuthorization();
+            // app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapRazorPages();
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");

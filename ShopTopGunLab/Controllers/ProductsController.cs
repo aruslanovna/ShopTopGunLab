@@ -8,21 +8,31 @@ using Microsoft.EntityFrameworkCore;
 using Domain.Entities;
 
 using ShopTopGunLab.SessionConfig;
+using Microsoft.AspNetCore.Http;
 
 namespace ShopTopGunLab.Controllers
 {
    
     public class ProductsController : Controller
     {
-      
 
-        public ProductsController()
+
+        private readonly IHttpContextAccessor _contextAccessor;
+
+        public ProductsController(IHttpContextAccessor contextAccessor)
         {
-
-           
+            _contextAccessor = contextAccessor;
+            List<Product> productList = new List<Product>();
+            Product user = new Product();
+            user.Name = "Bread";
+            user.Quantity = 5;
+            productList.Add(user);
+            _contextAccessor.HttpContext.Session.SetList("ProductData", productList);
         }
-        List<Product> productList = new List<Product>();
+
         
+
+
         [Route("Products/SetComplexData")]
         public void SetComplexData()        
         {
@@ -33,9 +43,10 @@ namespace ShopTopGunLab.Controllers
             productList.Add(user);
             HttpContext.Session.SetList("ProductData", productList);
         }
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-
         public void SetComplexData(Product product)
         {
             List<Product> productList = HttpContext.Session.GetList<List<Product>>("ProductData");
@@ -61,8 +72,7 @@ namespace ShopTopGunLab.Controllers
             product1.ProductId = product.ProductId;
             product1.Name = product.Name;
             product1.Quantity = product.Quantity;
-            product1.dimension = product.dimension;
-            
+            product1.dimension = product.dimension;           
             productList.Add(product1);
             HttpContext.Session.SetList("ProductData", productList);
         }
@@ -88,7 +98,7 @@ namespace ShopTopGunLab.Controllers
             return productList;
         }
 
-        // GET: Products
+        
         public async Task<IActionResult> Index(string sortOrder, string searchString)
         {
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
@@ -106,7 +116,6 @@ namespace ShopTopGunLab.Controllers
         }
 
 
-        // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -123,13 +132,13 @@ namespace ShopTopGunLab.Controllers
             return View(product);
         }
 
-        // GET: Products/Create
+    
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Products/Create
+       
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Quantity")] Product product)
@@ -143,7 +152,7 @@ namespace ShopTopGunLab.Controllers
             return View(product);
         }
 
-        // GET: Products/Edit/5
+      
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -159,9 +168,7 @@ namespace ShopTopGunLab.Controllers
             return View(product);
         }
 
-        // POST: Products/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Name,Quantity")] Product product)
@@ -194,7 +201,7 @@ namespace ShopTopGunLab.Controllers
             return View(product);
         }
 
-        // GET: Products/Delete/5
+        
         public async Task<IActionResult> Delete(int id,  bool delete)
         {
             if (id == null)
@@ -220,9 +227,7 @@ namespace ShopTopGunLab.Controllers
         
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            //var products = GetComplexData().ToList();
-            //Product product = products.Where(product => product.ProductId == id).First();
-
+           
             RemoveComplexData(id);
             return RedirectToAction(nameof(Index));
         }
