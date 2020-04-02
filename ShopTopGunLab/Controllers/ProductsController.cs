@@ -191,29 +191,44 @@ namespace ShopTopGunLab.Controllers
             }
             return View(product);
         }
-        
-        public async Task<IActionResult> Delete(int id,  bool delete)
+        //[HttpGet]
+        //public ActionResult Delete2(int id)
+        //{
+        //    var model = productData.Get(id, (List<Product>)Session["Products"]);
+
+        //    if (model == null)
+        //    {
+        //        return View("NotFound");
+        //    }
+
+        //    return PartialView(model);
+        //}
+
+        //[HttpPost]
+        //public ActionResult Delete2(int id, FormCollection form)
+        //{
+        //    List<Product> list = (List<Product>)Session["Products"];
+        //    list.RemoveAll(l => l.Id == id);
+        //    Session["Products"] = list;
+        //    Session["Count"] = Convert.ToInt32(Session["Count"]) - 1;
+        //    return RedirectToAction("Index");
+        //}
+        [HttpGet]
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
             var product = GetComplexData().FirstOrDefault(m => m.ProductId == id);
             if (product == null)
             {
                 return NotFound();
             }
-
-            if (delete == true)
-            {
-                RemoveComplexData(id);
-            }
-
-            return PartialView("Delete", product);
+            return PartialView(product);
         }
- 
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
         {
            
             RemoveComplexData(id);

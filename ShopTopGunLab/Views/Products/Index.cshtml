@@ -6,15 +6,33 @@
 
 
 
+@section scripts
+{
+  
+
+<script type="text/javascript">
+
+    $(function () {
+        $.ajaxSetup({ cache: false });
+        $(".compItem").click(function (e) {
+
+            e.preventDefault();
+            $.get(this.href, function (data) {
+                $('#dialogContent').html(data);
+                $('#modDialog').modal('show');
+            });
+           
+        });
+    })
+</script>
+}
 
 
 <div id="wrapper">
 
     <h1>Grocery List</h1>
     <form asp-action="Index" method="get">
-        <p>
-            <a asp-action="Create">Add product</a>
-        </p>
+       
         <div class="form-actions no-color search">
             <p>
                 Find by name: <input type="text" name="SearchString" value="@ViewData["currentFilter"]" />
@@ -30,7 +48,7 @@
                     <div id="modDialog" class="modal fade">
                         <div id="dialogContent" class="modal-dialog"></div>
                     </div>
-                    </th>
+                </th>
                 <th>
                     <span>
                         @Html.DisplayNameFor(model => model.Name)
@@ -52,10 +70,10 @@
 
             @foreach (var item in Model)
             {
-               
+
                 <tr>
                     <td>
-                        </td>
+                    </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Name)
                     </td>
@@ -64,7 +82,7 @@
                         @Html.DisplayFor(modelItem => item.dimension)
                     </td>
                     <td>
-                        
+
                         @Html.ActionLink("Edit", "Edit",
            new { id = item.ProductId })
 
@@ -73,7 +91,7 @@
 
                         @Html.ActionLink("Delete", "Delete",
         new { id = item.ProductId }, new { @class = "compItem" })
-
+                       
                         @*<a asp-action="Delete" asp-route-id="@item.ProductId" asp-route-class="compItem">Delete</a>*@
                     </td>
                 </tr>
@@ -90,10 +108,10 @@
 @section scripts
 {
     <script type="text/javascript">
-        
+
         $(function () {
             $.ajaxSetup({ cache: false });
-           $(".compItem").click(function (e) {
+            $(".compItem").click(function (e) {
 
                 e.preventDefault();
                 $.get(this.href, function (data) {
